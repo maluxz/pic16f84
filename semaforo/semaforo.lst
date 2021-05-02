@@ -1,0 +1,273 @@
+MPASM  5.51                      SEMAFORO.ASM   4-30-2021  18:13:57         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;Actividad 
+                      00002 ;Proyecto: semaforo
+                      00003 ;Programa que controla DOS semáforos de 3 COLORES
+                      00004 ;Asignando 25 segundos al VERDE, 5 al AMARILLO y 30 al rojo (AMARILLO + VERDE = ROJO)
+                      00005 ;Autor: Equipo 2
+                      00006 ;Fecha: 30 Abril 2021
+                      00007                 list p=16f84a
+                      00008                 include <p16F84a.inc>
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC16F84A processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2013 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00208         LIST
+2007   3FF3           00009                 __CONFIG _RC_OSC & _WDT_OFF & _PWRTE_ON
+                      00010 
+  0000001A            00011 i               equ     h'1A'
+  0000001B            00012 j               equ     h'1B'
+  0000001C            00013 k               equ     h'1C'
+                      00014 
+                      00015                 org 0
+0000   1683           00016 Inicio  bsf             STATUS,RP0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0001   0186           00017                 clrf    TRISB           ;Puerto B como entrada
+0002   1283           00018                 bcf             STATUS,RP0      ;Banco
+                      00019                 #DEFINE R1      PORTB,0 ;Rojo de Semáforo 1
+                      00020                 #DEFINE A1      PORTB,1 ;Amarillo de Semáforo 1
+                      00021                 #DEFINE V1      PORTB,2 ;Verde de Semáforo 1
+                      00022                 #DEFINE R2      PORTB,3 ;Rojo de Semáforo 2
+                      00023                 #DEFINE A2      PORTB,4 ;Amarillo de Semáforo 2
+                      00024                 #DEFINE V2      PORTB,5 ;Verde de Semáforo 2
+                      00025 
+0003                  00026 Principal
+0003   0186           00027                         clrf    PORTB
+0004   1406           00028                         bsf             R1      ;R1 V2
+0005   1686           00029                         bsf             V2
+                      00030 
+                      00031                         ;DELAY 25S
+0006   30FF           00032                         movlw   d'255'
+0007   009A           00033                         movwf   i                       ;1 ciclo
+0008   30FF           00034                         movlw   d'255'
+0009   009B           00035 EsperarI        movwf   j                       ;1 ciclo
+000A   3080           00036                         movlw   d'128'
+000B   009C           00037 EsperarJ        movwf   k                       ;1 ciclo
+000C   0B9C           00038 EsperarK        decfsz  k,1                     ;1 ciclo, 2 final
+000D   2???           00039                         goto    EsperarK        ;2 ciclos
+000E   0B9B           00040                         decfsz  j,1                     ;1 ciclo, 2 final
+000F   2???           00041                         goto    EsperarJ        ;2 ciclos
+0010   0B9A           00042                         decfsz  i,1                     ;1 ciclo, 2 final
+0011   2???           00043                         goto    EsperarI        ;2 ciclos
+MPASM  5.51                      SEMAFORO.ASM   4-30-2021  18:13:57         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00044         
+0012   0186           00045                         clrf    PORTB
+0013   1406           00046                         bsf     R1
+0014   1606           00047                         bsf     A2
+                      00048 
+                      00049                         ;DELAY 5S
+0015   30FF           00050                         movlw   d'255'
+0016   009A           00051                         movwf   i                       ;1 ciclo
+0017   30FF           00052                         movlw   d'255'
+0018   009B           00053 EsperarIA       movwf   j                       ;1 ciclo
+0019   301A           00054                         movlw   d'26'
+001A   009C           00055 EsperarJA       movwf   k                       ;1 ciclo
+001B   0B9C           00056 EsperarKA       decfsz  k,1                     ;1 ciclo, 2 final
+001C   2???           00057                         goto    EsperarKA       ;2 ciclos
+001D   0B9B           00058                         decfsz  j,1                     ;1 ciclo, 2 final
+001E   2???           00059                         goto    EsperarJA       ;2 ciclos
+001F   0B9A           00060                         decfsz  i,1                     ;1 ciclo, 2 final
+0020   2???           00061                         goto    EsperarIA       ;2 ciclos
+                      00062 
+0021   0186           00063                         clrf    PORTB
+0022   1506           00064                         bsf     V1
+0023   1586           00065                         bsf     R2
+                      00066 
+                      00067                         ;DELAY 25S
+0024   30FF           00068                         movlw   d'255'
+0025   009A           00069                         movwf   i                       ;1 ciclo
+0026   30FF           00070                         movlw   d'255'
+0027   009B           00071 EsperarIB       movwf   j                       ;1 ciclo
+0028   3080           00072                         movlw   d'128'
+0029   009C           00073 EsperarJB       movwf   k                       ;1 ciclo
+002A   0B9C           00074 EsperarKB       decfsz  k,1                     ;1 ciclo, 2 final
+002B   2???           00075                         goto    EsperarKB       ;2 ciclos
+002C   0B9B           00076                         decfsz  j,1                     ;1 ciclo, 2 final
+002D   2???           00077                         goto    EsperarJB       ;2 ciclos
+002E   0B9A           00078                         decfsz  i,1                     ;1 ciclo, 2 final
+002F   2???           00079                         goto    EsperarIB       ;2 ciclos
+                      00080 
+0030   0186           00081                         clrf    PORTB
+0031   1486           00082                         bsf     A1
+0032   1606           00083                         bsf     A2
+                      00084 
+                      00085                         ;DELAY 5S
+0033   30FF           00086                         movlw   d'255'
+0034   009A           00087                         movwf   i                       ;1 ciclo
+0035   30FF           00088                         movlw   d'255'
+0036   009B           00089 EsperarIC       movwf   j                       ;1 ciclo
+0037   301A           00090                         movlw   d'26'
+0038   009C           00091 EsperarJC       movwf   k                       ;1 ciclo
+0039   0B9C           00092 EsperarKC       decfsz  k,1                     ;1 ciclo, 2 final
+003A   2???           00093                         goto    EsperarKC       ;2 ciclos
+003B   0B9B           00094                         decfsz  j,1                     ;1 ciclo, 2 final
+003C   2???           00095                         goto    EsperarJC       ;2 ciclos
+003D   0B9A           00096                         decfsz  i,1                     ;1 ciclo, 2 final
+MPASM  5.51                      SEMAFORO.ASM   4-30-2021  18:13:57         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+003E   2???           00097                         goto    EsperarIC       ;2 ciclos
+                      00098 
+3FF3                  00099                         end
+MPASM  5.51                      SEMAFORO.ASM   4-30-2021  18:13:57         PAGE  4
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+A1                                PORTB,1
+A2                                PORTB,4
+C                                 00000000
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+EsperarI                          00000009
+EsperarIA                         00000018
+EsperarIB                         00000027
+EsperarIC                         00000036
+EsperarJ                          0000000B
+EsperarJA                         0000001A
+EsperarJB                         00000029
+EsperarJC                         00000038
+EsperarK                          0000000C
+EsperarKA                         0000001B
+EsperarKB                         0000002A
+EsperarKC                         00000039
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+Inicio                            00000000
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+Principal                         00000003
+R1                                PORTB,0
+R2                                PORTB,3
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RB0                               00000000
+MPASM  5.51                      SEMAFORO.ASM   4-30-2021  18:13:57         PAGE  5
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+V1                                PORTB,2
+V2                                PORTB,5
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CONFIG                           00002007
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_DEVID1                           00002006
+_FOSC_EXTRC                       00003FFF
+_FOSC_HS                          00003FFE
+_FOSC_LP                          00003FFC
+_FOSC_XT                          00003FFD
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+MPASM  5.51                      SEMAFORO.ASM   4-30-2021  18:13:57         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+i                                 0000001A
+j                                 0000001B
+k                                 0000001C
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     1 reported,     0 suppressed
+
+
